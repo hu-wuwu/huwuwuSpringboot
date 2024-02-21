@@ -3,23 +3,5 @@ spring:
     name: huwuwuLearning
   profiles:
     active: dev
-  redis:
-    host: 127.0.0.1
-    port: 6379
-    password: 123456
-    database: 0
-    timeout: 10000 #连接超时 毫秒
-    lettuce:
-      #shutdown命令关闭redis时，如果在指定的超时时间内，Redis还没有将数据从内存中持久化到磁盘上，那么Redis将强制关闭。
-      #Shutdowntimeout参数的默认值是10秒钟。
-      shutdown-timeout: 10000
-      pool:
-        # 连接池中的最小空闲连接
-        min-idle: 10
-        # 连接池中的最大空闲连接
-        max-idle: 20
-        # 连接池的最大数据库连接数
-        max-active: 200
-        # #连接池最大阻塞等待时间（使用负值表示没有限制）
-        max-wait: 10000
+
 
