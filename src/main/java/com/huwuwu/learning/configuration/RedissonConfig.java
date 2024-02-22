@@ -19,6 +19,11 @@ public class RedissonConfig {
  
     @Value("${spring.redis.port}")
     private String port;
+
+    @Value("${spring.redis.password}")
+    private String password;
+
+
  
     @Bean
     public RedissonClient redissonClient() {
@@ -28,7 +33,7 @@ public class RedissonConfig {
         //配置类
         Config config = new Config();
         //单机使用
-        config.useSingleServer().setAddress("redis://" + host + ":" + port);
+        config.useSingleServer().setAddress("redis://" + host + ":" + port).setPassword(password);
         //如果是集群的可以使用：config.useClusterServers()
         return Redisson.create(config);
 
