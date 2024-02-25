@@ -11,6 +11,7 @@ public class MyThread1 extends Thread{
         System.out.println("子线程开始处理任务");
         try {
             Thread.sleep(3000);
+            System.out.println("处理完成。。");
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
