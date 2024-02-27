@@ -72,7 +72,7 @@ public class CreateThreadTest{
         //5、在主线程中获取子线程返回值--》注：子线程可能还没执行完
         System.out.println("main线程继续执行。。");
 
-        Integer res = futureTask.get();//发现主线程一定会等待子线程执行完，原因：get方法是一个阻塞的方法
+        Integer res = futureTask.get();//发现主线程一定会等待子线程执行完【死等】，原因：get方法是一个阻塞的方法
 
         System.out.println("子线程返回值"+res);
 
