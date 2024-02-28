@@ -98,7 +98,6 @@ public class SecuThreadTest {
         Account a2 = new Account(1000);
 
         Random random = new Random();
-
         Thread t1 = new Thread(() -> {
             for (int j = 0; j < 1000; j++) {
                 a1.transfer2(a2,random.nextInt(10));
