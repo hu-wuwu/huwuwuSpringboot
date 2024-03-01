@@ -9,6 +9,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
 
@@ -65,6 +66,18 @@ public class CreateThreadTest{
 
         //3、创建线程对象
         Thread thread = new Thread(futureTask);
+
+        //匿名内部类
+        Thread t_nbl = new Thread(new FutureTask<Integer>(new Callable<Integer>() {
+            @Override
+            public Integer call() throws Exception {
+                return (int) (Math.random() * 100);
+            }
+        }));
+
+
+        //lambda
+        Thread t_lambda = new Thread(new FutureTask<Integer>(()->  (int) (Math.random() * 100)));
 
         //4、启动线程
         thread.start();

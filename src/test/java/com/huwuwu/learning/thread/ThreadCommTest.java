@@ -1,5 +1,6 @@
 package com.huwuwu.learning.thread;
 
+import com.sun.rowset.internal.Row;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -23,7 +24,7 @@ public class ThreadCommTest {
         Object lock = new Object();
 
         Thread t1 = new Thread(() -> {
-            synchronized (lock){
+            synchronized (lock) {
                 try {
                     System.out.println("子线程准备进入等待。。");
                     //wait：让调用这个方法的线程进入等待【阻塞】
@@ -44,23 +45,22 @@ public class ThreadCommTest {
         Thread.sleep(10);
 
         for (int i = 0; i < 5; i++) {
-            synchronized (lock){
-                new Thread(()->{
-                    System.out.println(Thread.currentThread().getName()+"线程正在执行");
+            synchronized (lock) {
+                new Thread(() -> {
+                    System.out.println(Thread.currentThread().getName() + "线程正在执行");
                 }).start();
             }
         }
 
 
-
 //        Thread.sleep(3000);
 
         boolean alive = t1.isAlive();
-        if (alive){
+        if (alive) {
             System.out.println("主线程准备打断子线程。。");
             //非正常打断等待
             t1.interrupt();
-        }else {
+        } else {
             System.out.println("t1子线程执行结束。写·");
         }
 
@@ -74,7 +74,7 @@ public class ThreadCommTest {
 
         Thread t1 = new Thread(() -> {
 
-            synchronized (lock){
+            synchronized (lock) {
                 System.out.println("t1子线程即将进行等待。。");
                 try {
 //                    lock.notify();
@@ -91,7 +91,7 @@ public class ThreadCommTest {
         });
         Thread t2 = new Thread(() -> {
 
-            synchronized (lock){
+            synchronized (lock) {
                 System.out.println("t2子线程即将进行等待。。");
                 try {
 //                    lock.notify();
@@ -111,11 +111,74 @@ public class ThreadCommTest {
         t2.start();
         Thread.sleep(3000);
 
-        synchronized (lock){
+        synchronized (lock) {
 //            lock.notify();//这个方法也要在同步块（锁住的代码块）中--随机唤醒使用该锁的子线程
-            lock.notifyAll();
+            lock.notifyAll();//唤醒所有线程
         }
+    }
 
+    static Object room = new Object();
+    static boolean hasYan = false;
+    static boolean hasJiu = false;
+
+    @Test
+    public void ThreadCommTest3() throws InterruptedException {
+
+        Thread t1 = new Thread(() -> {
+
+            synchronized (room) {
+                System.out.println("张三进入到房间准备干活");
+                while (!hasYan) {
+                    try {
+                        System.out.println("没有烟，张三进入等待。。。");
+                        room.wait();//立马释放锁
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+                System.out.println("张三抽口烟，继续干活。。。");
+            }
+        });
+
+        Thread t2 = new Thread(() -> {
+
+            synchronized (room) {
+                System.out.println("李四进入到房间准备干活");
+                while (!hasJiu) {
+                    try {
+                        System.out.println("没有酒，李四进入等待。。。");
+                        room.wait();//立马释放锁
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+                System.out.println("李四喝口酒，继续干活。。。");
+            }
+        });
+
+        Thread t3 = new Thread(() -> {
+
+            synchronized (room) {
+                hasYan = true;
+                System.out.println("烟已送到，准备唤醒等烟的线程。。。");
+                //要求精确唤醒张三
+                room.notifyAll();
+            }
+        });
+        Thread t4 = new Thread(() -> {
+
+            synchronized (room) {
+                hasJiu = true;
+                System.out.println("酒已送到，准备唤醒等酒的线程。。。");
+                //要求精确唤醒李四
+                room.notifyAll();
+            }
+        });
+        t1.start();
+        t2.start();
+        Thread.sleep(3000);
+        t3.start();
+        t4.start();
 
     }
 }
