@@ -1,6 +1,13 @@
 server:
   port: 18081
 spring:
+  datasource:
+    druid:
+      url: jdbc:mysql://127.0.0.1:3306/huwuwu?useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+      username: root
+      password: 123456
+      driver-class-name: com.mysql.cj.jdbc.Driver
+
   redis:
     host: 127.0.0.1
     port: 6379
@@ -20,3 +27,43 @@ spring:
         max-active: 200
         # #连接池最大阻塞等待时间（使用负值表示没有限制）
         max-wait: 10000
+
+mybatis-plus:
+  # 指定Mapper XML文件的位置，使用classpath通配符指定路径。
+  mapper-locations: classpath*:mapper/*.xml
+  # 指定实体类的包路径，用于自动扫描并注册类型别名。
+  type-aliases-package: com.zskx.service.card.model.*
+  # 全局配置
+  global-config:
+    db-config:
+      #id-type: ID_WORKER（默认）  # 主键ID的生成策略，可选值包括：AUTO、NONE、INPUT、ID_WORKER、UUID
+#      id-type: AUTO
+      #机器 ID 部分(影响雪花ID)
+      workerId: 1
+      #数据标识 ID 部分(影响雪花ID)(workerId 和 datacenterId 一起配置才能重新初始化 Sequence)
+      datacenterId: 18
+      # 字段验证策略，可选值包括：not_null、not_empty、default
+      field-strategy: not_empty
+      #驼峰下划线转换（将数据库字段的下划线命名规则转换为 Java 实体类属性的驼峰命名规则）
+      db-column-underline: true
+      #刷新mapper 调试神器
+      refresh-mapper: true
+      #数据库大写下划线转换
+      #capital-mode: true
+      #序列接口实现类配置
+      #key-generator: com.baomidou.springboot.xxx
+      #逻辑删除配置（下面3个配置）
+      logic-delete-field: deleted  # 逻辑删除字段名
+      logic-delete-value: 1  # 逻辑删除字段的值表示已删除
+      logic-not-delete-value: 0  # 逻辑删除字段的值表示未删除
+      #自定义SQL注入器
+      #sql-injector: com.baomidou.mybatisplus.mapper.LogicSqlInjector
+      #自定义填充策略接口实现
+      #meta-object-handler: com.baomidou.springboot.xxx
+      configuration:
+        # 将 Java 实体类属性的驼峰命名规则转换为数据库字段的下划线命名规则
+        map-underscore-to-camel-case: true
+        # 是否开启二级缓存。
+        cache-enabled: false
+        # 这个配置会将执行的sql打印出来，在开发或测试的时候可以用
+        log-impl: org.apache.ibatis.logging.stdout.StdOutImpl

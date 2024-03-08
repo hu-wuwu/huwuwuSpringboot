@@ -10,7 +10,9 @@ import com.huwuwu.learning.commons.eums.ErrorCode;
  * @Modified By:
  */
 public class ResultUtils {
- 
+
+
+
     /**
      * 成功
      * @param data
@@ -56,4 +58,6 @@ public class ResultUtils {
     public static BaseResponse error(int errorCode,String message,String descrition){
         return new BaseResponse<>(errorCode,null,message,descrition);
     }
+
+
 }

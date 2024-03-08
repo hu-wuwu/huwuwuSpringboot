@@ -15,7 +15,10 @@ public enum ErrorCode{
     NULL_AUTH(40101,"无权限",""),
     NOT_LOGIN(40100,"未登录",""),
     REDISS_ERROR(50001,"redis异常",""),
-    SYSTEM_ERROR(50000,"系统内部异常","");
+    SYSTEM_ERROR(50000,"系统内部异常",""),
+    SEC_LOGIN_ERROR(60101,"token非法",""),
+    SEC_TOKEN_ERROR(60102,"token非法","");
+
  
     private final int code;
     /**

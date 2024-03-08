@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.huwuwu.learning.mapper.AdminDAO">
+    <resultMap id="adminMap" type="com.huwuwu.learning.model.entity.Admin">
+        <id property="id" column="id"></id>
+        <result property="username" column="username"></result>
+        <result property="password" column="password"></result>
+        <collection property="permissions" ofType="com.huwuwu.learning.model.entity.Auth">
+            <result property="authName" column="auth_name"></result>
+        </collection>
+    </resultMap>
+
+    <select id="selectByUsername" resultMap="adminMap">
+        select a1.id id ,username, password,enabled,auth_name authName from admin a1 left join auth a2 on a1.id = a2.admin_id where a1.username = #{username}
+
+    </select>
+</mapper>
