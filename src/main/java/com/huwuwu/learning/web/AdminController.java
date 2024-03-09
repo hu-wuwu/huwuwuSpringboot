@@ -2,53 +2,74 @@ package com.huwuwu.learning.web;
 
 import com.huwuwu.learning.commons.response.BaseResponse;
 import com.huwuwu.learning.commons.response.ResultUtils;
-import com.huwuwu.learning.model.dto.AdminDetails;
-import com.huwuwu.learning.model.dto.UserDTO;
-import com.huwuwu.learning.service.AdminService;
+import com.huwuwu.learning.model.dto.AdminDTO;
+import com.huwuwu.learning.model.dto.LoginUser;
+import com.huwuwu.learning.service.LoginService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import java.util.Collection;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/admins")
+@RequestMapping("/admin")
 @Slf4j
 public class AdminController {
 
     @Autowired
-    private AdminService adminService;
+    private LoginService loginService;
 
     /**
      * 登录接口
-     * @param userDTO
+     * @param adminDTO
      * @return
      */
     @PostMapping("/login")
-    public BaseResponse login(UserDTO userDTO){
+    public BaseResponse login(AdminDTO adminDTO){
         System.out.println("调用service进行处理");
-        String jwt = adminService.login(userDTO);
-        return ResultUtils.success(jwt);
+        return loginService.login(adminDTO);
     }
 
     /**
-     * 注入的类型改为AdminDetails
-     * @param adminDetails
+     * 注入的类型改为loginUser
+     * @param loginUser
      * @return
      */
     @GetMapping("/getPrincipal")
-    public BaseResponse getPrincipal(@AuthenticationPrincipal AdminDetails adminDetails) {
-        log.debug("当事人用户id:{}",adminDetails.getId());
-        log.debug("当事人用户名是:{}",adminDetails.getUsername());
-        //获取权限
-        Collection<GrantedAuthority> authorities = adminDetails.getAuthorities();
+    public BaseResponse getPrincipal(@AuthenticationPrincipal LoginUser loginUser) {
+        log.debug("当事人用户id:{}", loginUser.getId());
+        log.debug("当事人用户名是:{}", loginUser.getUsername());
         return ResultUtils.success("");
     }
+
+    /**
+     * 退出登录
+     * @return
+     */
+    @RequestMapping("/logout")
+    public BaseResponse logout() {
+        // 登出
+        return loginService.logout();
+    }
+
+    /**
+     * 修改密码
+     *
+     */
+    @RequestMapping("/updatePassword")
+    public BaseResponse updatePassword(@RequestBody AdminDTO adminDTO) {
+        // 登出
+        return loginService.updatePassword(adminDTO);
+    }
+
+    /**
+     * 用户注册
+     */
+    @RequestMapping("/register")
+    public BaseResponse register(@RequestBody AdminDTO adminDTO){
+
+        return loginService.register(adminDTO);
+    }
+
 
 
 }

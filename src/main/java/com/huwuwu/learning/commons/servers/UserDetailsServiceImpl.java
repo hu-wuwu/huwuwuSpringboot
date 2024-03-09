@@ -1,92 +1,29 @@
 package com.huwuwu.learning.commons.servers;
 
-import com.alibaba.fastjson.annotation.JSONField;
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.huwuwu.learning.commons.eums.ErrorCode;
+import com.huwuwu.learning.commons.exceprions.BusinessException;
 import com.huwuwu.learning.mapper.AdminDAO;
-import com.huwuwu.learning.model.dto.AdminDetails;
+import com.huwuwu.learning.model.dto.LoginUser;
 import com.huwuwu.learning.model.entity.Admin;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.beans.BeanUtils;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.Collection;
-import java.util.List;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 @Data
 @NoArgsConstructor
 @Service
-public class UserDetailsServiceImpl implements UserDetails, UserDetailsService {
-
-    private User user;
-
-    private List<String> permissions;
+public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Resource
     private AdminDAO adminDAO;
-
-    public UserDetailsServiceImpl(User user, List<String> permissions) {
-        this.user = user;
-        this.permissions = permissions;
-    }
-
-
-    //返回权限信息
-    @JSONField(serialize = false)  //不需要存到redis中，进行序列化忽略
-    private List<SimpleGrantedAuthority> authorities;
-
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        if (authorities != null) {
-            return authorities;
-        }
-        //获取权限时判断如果为空，则。。
-        authorities = permissions.stream()
-                .map(SimpleGrantedAuthority::new)
-                .collect(Collectors.toList());
-
-        return authorities;
-    }
-
-    @Override
-    public String getPassword() {
-        return user.getPassword();
-    }
-
-    @Override
-    public String getUsername() {
-        return user.getUsername();
-    }
-
-    //判断是否没过期
-    @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return true;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return true;
-    }
 
     /**
      * 根据用户名返回匹配的用户详情
@@ -100,27 +37,21 @@ public class UserDetailsServiceImpl implements UserDetails, UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
+        //查询出用户后还要获取对应的权限信息，封装到UserDetails中返回
         //查询用户信息
-        LambdaQueryWrapper<Admin> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(Admin::getUsername, username);
-        Admin admin = adminDAO.selectOne(wrapper);
+//        LambdaQueryWrapper<Admin> wrapper = new LambdaQueryWrapper<>();
+//        wrapper.eq(Admin::getUsername, username);
+//        Admin admin = adminDAO.selectOne(wrapper);
+
+        //查询用户信息（查询数据库，这里使用假数据）
+        Admin admin = new Admin("1", "huwuwu", "123456", 1, new ArrayList<>(Arrays.asList("test", "admin")));
         //如果没有查询到用户就抛出异常
         if (Objects.isNull(admin)) {
-            throw new RuntimeException("用户名或密码错误");
+            throw new BusinessException(ErrorCode.SEC_LOGIN_USER_ERROR);
         }
 
-        AdminDetails adminDetails = new AdminDetails(
-                admin.getId(),
-                admin.getUsername(),
-                admin.getPassword(),
-                admin.getEnabled() == 1,
-                authorities//现在authorities为null，后面用户需要获取权限调用上面的getAuthorities方法即可
-        );
-
-        //获取该用户的所有权限
-        List<String> list = admin.getPermissions();
-
-        return new UserDetailsServiceImpl(adminDetails, list);
+        // 把数据封装成LoginUser对象返回
+        return new LoginUser(admin.getId(), admin.getUsername(), admin.getPassword(),admin.getPermissions());
     }
 
 }

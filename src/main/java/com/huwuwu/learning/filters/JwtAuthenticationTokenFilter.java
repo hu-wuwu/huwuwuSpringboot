@@ -4,7 +4,7 @@ import com.huwuwu.learning.commons.eums.ErrorCode;
 import com.huwuwu.learning.commons.exceprions.BusinessException;
 import com.huwuwu.learning.commons.utils.JwtUtil;
 import com.huwuwu.learning.commons.utils.RedisUtil;
-import com.huwuwu.learning.commons.servers.UserDetailsServiceImpl;
+import com.huwuwu.learning.model.dto.LoginUser;
 import io.jsonwebtoken.Claims;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -33,8 +33,9 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
                                     FilterChain filterChain) throws ServletException, IOException {
 
         String token = request.getHeader("token");
+        // token是空则放行
         if (!StringUtils.hasText(token)) {
-            //token为空,放行
+            //放行
             filterChain.doFilter(request, response);
             return;
         }
@@ -46,16 +47,17 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
         } catch (Exception e) {
             throw new BusinessException(ErrorCode.SEC_TOKEN_ERROR);
         }
+
         //从redis中获取用户信息
         String redisKey = "login_" + userId;
-        UserDetailsServiceImpl userDetailsServiceImpl = redisUtil.get(redisKey, UserDetailsServiceImpl.class);
-        if (Objects.isNull(userDetailsServiceImpl)){
+        LoginUser loginUser = redisUtil.get(redisKey, LoginUser.class);
+        if (Objects.isNull(loginUser)){
             throw new BusinessException(ErrorCode.SEC_LOGIN_ERROR);
         }
 
         // 获取权限信息封装到Authentication中
         Authentication authentication  =
-                new UsernamePasswordAuthenticationToken(userDetailsServiceImpl, null, userDetailsServiceImpl.getAuthorities());
+                new UsernamePasswordAuthenticationToken(loginUser, null, loginUser.getAuthorities());
         //最后存入SecurityContext中
         SecurityContext securityContext = SecurityContextHolder.getContext();
         securityContext.setAuthentication(authentication);

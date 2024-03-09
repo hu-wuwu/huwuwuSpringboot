@@ -7,11 +7,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.User;
 
 import java.io.Serializable;
-import java.util.Collection;
 import java.util.List;
 
 @Data
@@ -36,6 +33,9 @@ public class Admin implements Serializable {
     @TableField
     private int enabled;
 
+    /**
+     * 权限
+     */
     private List<String> permissions;
 
 }

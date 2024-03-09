@@ -11,14 +11,15 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.stereotype.Component;
@@ -29,9 +30,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+/**
+ * EnableGlobalMethodSecurity开启，可以使用权限注解，如：@PreAuthorize("hasAuthority('test')")
+ */
 @Configuration
 @EnableGlobalMethodSecurity(prePostEnabled = true)
-public class SecurityConfig extends WebSecurityConfigurerAdapter {
+public class SecurityConfig{
 
     /**
      * 目前最主流、安全性最高的加密算法 BCrypt
@@ -54,6 +58,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Resource
     private AccessDeniedHandler accessDeniedHandler;
 
+
+    @Bean
+    public AuthenticationManager authenticationManagerBean(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+        return authenticationConfiguration.getAuthenticationManager();
+    }
+
     /**
      * 配置 URL 的安全配置
      * <p>
@@ -71,9 +81,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
      * rememberMe          |   允许通过remember-me登录的用户访问
      * authenticated       |   用户登录后可访问
      */
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        http
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
+        httpSecurity
                 //关闭csrf
                 .csrf().disable()
                 //不通过Session获取SecurityContext
@@ -82,10 +92,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
 
                 // 对于登录接口 允许匿名访问 未登录状态也可以访问
-                .antMatchers("/login/login").permitAll()
-                .antMatchers("/login/register").permitAll()
-                .antMatchers("/login/sendCode").permitAll()
-                .antMatchers("/pay/notify").permitAll()
+                .antMatchers("/login/login").anonymous()
+                .antMatchers("/login/register").anonymous()
+                .antMatchers("/login/sendCode").anonymous()
+                .antMatchers("/pay/notify").anonymous()
                 // 需要用户带有管理员权限
 //                .antMatchers("/find").hasRole("管理员")
 //                // 需要用户具备这个接口的权限
@@ -95,23 +105,20 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .anyRequest().authenticated();
 
         //将自定义的JWT过滤器添加在Spring Security的UsernamePasswordAuthenticationFilter之前
-        http.addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class);
+        httpSecurity.addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class);
 
         //配置异常处理器
-        http.exceptionHandling()
+        httpSecurity.exceptionHandling()
                 //配置认证失败处理器
                 .authenticationEntryPoint(authenticationEntryPoint)
                 .accessDeniedHandler(accessDeniedHandler);
 
         //允许跨域
-        http.cors();
+        httpSecurity.cors();
+
+        return httpSecurity.build();
     }
 
-    @Bean
-    @Override
-    public AuthenticationManager authenticationManagerBean() throws Exception {
-        return super.authenticationManagerBean();
-    }
 
     /**
      * 异常处理-认证
