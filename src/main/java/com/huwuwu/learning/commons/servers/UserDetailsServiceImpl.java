@@ -3,8 +3,8 @@ package com.huwuwu.learning.commons.servers;
 import com.huwuwu.learning.commons.eums.ErrorCode;
 import com.huwuwu.learning.commons.exceprions.BusinessException;
 import com.huwuwu.learning.mapper.AdminDAO;
-import com.huwuwu.learning.model.dto.LoginUser;
-import com.huwuwu.learning.model.entity.Admin;
+import com.huwuwu.learning.model.vo.LoginUser;
+import com.huwuwu.learning.model.po.AdminPO;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -44,14 +44,14 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 //        Admin admin = adminDAO.selectOne(wrapper);
 
         //查询用户信息（查询数据库，这里使用假数据）
-        Admin admin = new Admin("1", "huwuwu", "123456", 1, new ArrayList<>(Arrays.asList("test", "admin")));
+        AdminPO adminPO = new AdminPO("1", "huwuwu", "123456", 1, new ArrayList<>(Arrays.asList("test", "admin")));
         //如果没有查询到用户就抛出异常
-        if (Objects.isNull(admin)) {
+        if (Objects.isNull(adminPO)) {
             throw new BusinessException(ErrorCode.SEC_LOGIN_USER_ERROR);
         }
 
         // 把数据封装成LoginUser对象返回
-        return new LoginUser(admin.getId(), admin.getUsername(), admin.getPassword(),admin.getPermissions());
+        return new LoginUser(adminPO.getId(), adminPO.getUsername(), adminPO.getPassword(), adminPO.getPermissions());
     }
 
 }

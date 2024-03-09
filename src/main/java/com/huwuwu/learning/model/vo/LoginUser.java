@@ -1,4 +1,4 @@
-package com.huwuwu.learning.model.dto;
+package com.huwuwu.learning.model.vo;
 
 import com.alibaba.fastjson.annotation.JSONField;
 import lombok.Data;

@@ -1,9 +1,9 @@
-package com.huwuwu.learning.model.dto;
+package com.huwuwu.learning.model.vo;
 
 import lombok.Data;
 
 @Data
-public class AdminDTO {
+public class AdminVO {
 
     /**
      * 用户名

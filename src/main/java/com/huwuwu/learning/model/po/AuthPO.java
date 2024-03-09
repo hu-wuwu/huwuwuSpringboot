@@ -1,4 +1,4 @@
-package com.huwuwu.learning.model.entity;
+package com.huwuwu.learning.model.po;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -7,7 +7,7 @@ import lombok.Data;
 
 @Data
 @TableName("auth")
-public class Auth {
+public class AuthPO {
 
     @TableId("id")
     private String id;

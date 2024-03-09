@@ -4,8 +4,6 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import org.apache.tomcat.util.security.MD5Encoder;
-import org.springframework.beans.factory.annotation.Value;
 
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
@@ -15,8 +13,8 @@ import java.util.UUID;
 
 public class JwtUtil {
 
-    //有效期为
-    public static final Long JWT_TTL = 60 * 60 * 1000L;// 60 * 60 *1000  一个小时
+    //默认有效期为1小时
+    public static final Long JWT_TTL = 60 * 60 * 1000L;
     //设置秘钥明文
     public static final String JWT_KEY = "huwuwu";
 
@@ -64,7 +62,7 @@ public class JwtUtil {
                 .setIssuer("SERVICE")                        // 签发者
                 .setIssuedAt(now)                           // 签发时间
                 .signWith(signatureAlgorithm, secretKey)    //使用HS256对称加密算法签名, 第二个参数为秘钥
-                .setExpiration(expDate);
+                .setExpiration(expDate);                    //解析token时，会判断的过期时间戳是否大于解析token时间的时间戳
     }
 
 

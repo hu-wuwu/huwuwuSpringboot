@@ -1,16 +1,13 @@
 package com.huwuwu.learning.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.huwuwu.learning.model.entity.Admin;
+import com.huwuwu.learning.model.po.AdminPO;
 import org.apache.ibatis.annotations.Mapper;
-import org.springframework.security.core.userdetails.User;
-
-import java.security.Policy;
 
 
 @Mapper
-public interface AdminDAO extends BaseMapper<Admin> {
+public interface AdminDAO extends BaseMapper<AdminPO> {
 
 
-    Admin selectByUsername(String username);
+    AdminPO selectByUsername(String username);
 }

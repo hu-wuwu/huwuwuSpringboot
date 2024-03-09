@@ -1,15 +1,15 @@
 package com.huwuwu.learning.service;
 
 import com.huwuwu.learning.commons.response.BaseResponse;
-import com.huwuwu.learning.model.dto.AdminDTO;
+import com.huwuwu.learning.model.vo.AdminVO;
 
 public interface LoginService {
 
-    BaseResponse login(AdminDTO adminDTO);
+    BaseResponse login(AdminVO adminVO);
 
     BaseResponse logout();
 
-    BaseResponse updatePassword(AdminDTO adminDTO);
+    BaseResponse updatePassword(AdminVO adminVO);
 
-    BaseResponse register(AdminDTO adminDTO);
+    BaseResponse register(AdminVO adminDTO);
 }

@@ -4,7 +4,7 @@ import com.huwuwu.learning.commons.eums.ErrorCode;
 import com.huwuwu.learning.commons.exceprions.BusinessException;
 import com.huwuwu.learning.commons.utils.JwtUtil;
 import com.huwuwu.learning.commons.utils.RedisUtil;
-import com.huwuwu.learning.model.dto.LoginUser;
+import com.huwuwu.learning.model.vo.LoginUser;
 import io.jsonwebtoken.Claims;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

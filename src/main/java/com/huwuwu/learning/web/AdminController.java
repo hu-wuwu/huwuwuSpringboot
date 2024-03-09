@@ -2,8 +2,8 @@ package com.huwuwu.learning.web;
 
 import com.huwuwu.learning.commons.response.BaseResponse;
 import com.huwuwu.learning.commons.response.ResultUtils;
-import com.huwuwu.learning.model.dto.AdminDTO;
-import com.huwuwu.learning.model.dto.LoginUser;
+import com.huwuwu.learning.model.vo.AdminVO;
+import com.huwuwu.learning.model.vo.LoginUser;
 import com.huwuwu.learning.service.LoginService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,13 +20,13 @@ public class AdminController {
 
     /**
      * 登录接口
-     * @param adminDTO
+     * @param adminVO
      * @return
      */
     @PostMapping("/login")
-    public BaseResponse login(AdminDTO adminDTO){
+    public BaseResponse login(AdminVO adminVO){
         System.out.println("调用service进行处理");
-        return loginService.login(adminDTO);
+        return loginService.login(adminVO);
     }
 
     /**
@@ -56,18 +56,18 @@ public class AdminController {
      *
      */
     @RequestMapping("/updatePassword")
-    public BaseResponse updatePassword(@RequestBody AdminDTO adminDTO) {
+    public BaseResponse updatePassword(@RequestBody AdminVO adminVO) {
         // 登出
-        return loginService.updatePassword(adminDTO);
+        return loginService.updatePassword(adminVO);
     }
 
     /**
      * 用户注册
      */
     @RequestMapping("/register")
-    public BaseResponse register(@RequestBody AdminDTO adminDTO){
+    public BaseResponse register(@RequestBody AdminVO adminVO){
 
-        return loginService.register(adminDTO);
+        return loginService.register(adminVO);
     }
 
 

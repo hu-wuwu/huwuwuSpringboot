@@ -1,4 +1,4 @@
-package com.huwuwu.learning.model.entity;
+package com.huwuwu.learning.model.po;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -16,7 +16,7 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 @TableName("admin")
-public class Admin implements Serializable {
+public class AdminPO implements Serializable {
 
     @TableId
     private String id;

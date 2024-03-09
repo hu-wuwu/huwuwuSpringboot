@@ -6,8 +6,8 @@ import com.huwuwu.learning.commons.response.BaseResponse;
 import com.huwuwu.learning.commons.response.ResultUtils;
 import com.huwuwu.learning.commons.utils.JwtUtil;
 import com.huwuwu.learning.commons.utils.RedisUtil;
-import com.huwuwu.learning.model.dto.AdminDTO;
-import com.huwuwu.learning.model.dto.LoginUser;
+import com.huwuwu.learning.model.vo.AdminVO;
+import com.huwuwu.learning.model.vo.LoginUser;
 import com.huwuwu.learning.service.LoginService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,11 +33,11 @@ public class LoginServiceImpl implements LoginService {
     private RedisUtil redisUtil;
 
     @Override
-    public BaseResponse login(AdminDTO adminDTO) {
+    public BaseResponse login(AdminVO adminVO) {
         log.debug("开始处理验证登录的业务");
 
         Authentication authentication = new UsernamePasswordAuthenticationToken(
-                adminDTO.getUsername(), adminDTO.getPassword()
+                adminVO.getUsername(), adminVO.getPassword()
         );
         Authentication authenticationResult = authenticationManager.authenticate(authentication);
         // 如果认证没通过，给出对应提示
@@ -46,7 +46,7 @@ public class LoginServiceImpl implements LoginService {
         }
         // 如果认证通过了，使用用户生成JWT
         LoginUser loginUser = (LoginUser) authenticationResult.getPrincipal();
-        //给每个存到reids中登录key设置过期时间，1小时
+        //给每个存到reids中登录key设置过期时间，1小时，可以写一个拦截器判断过期时间小于30分钟进行续期
         redisUtil.set("login_" + loginUser.getId(), loginUser, LOGIN_REDIS_EXPIRE);
 
         HashMap<Object, Object> map = new HashMap<>();
@@ -67,13 +67,13 @@ public class LoginServiceImpl implements LoginService {
     }
 
     @Override
-    public BaseResponse updatePassword(AdminDTO adminDTO) {
+    public BaseResponse updatePassword(AdminVO adminVO) {
 
         return ResultUtils.success("修改密码成功！");
     }
 
     @Override
-    public BaseResponse register(AdminDTO adminDTO) {
+    public BaseResponse register(AdminVO adminVO) {
 
         return ResultUtils.success("注册成功！");
     }
