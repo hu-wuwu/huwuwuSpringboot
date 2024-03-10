@@ -17,8 +17,10 @@ public enum ErrorCode{
     REDISS_ERROR(50001,"redis异常",""),
     SYSTEM_ERROR(50000,"系统内部异常",""),
     SEC_LOGIN_ERROR(60101,"登录异常,请重新登录",""),
-    SEC_LOGIN_USER_ERROR(60102,"用户名错误",""),
+    SEC_LOGIN_USER_PASSWORD_ERROR(60102,"用户名或密码错误",""),
     SEC_AUTHEN_ERROR(60201,"认证异常",""),
+    SEC_AUTHEN_USERNAME_PASSWORD_ERROR(60202,"用户名或密码错误",""),
+    SEC_AUTHEN_NOAUTHOR_ERROR(60203,"认证请求未经授权",""),
     SEC_AUTHOR_ERROR(60301,"权限异常",""),
     SEC_TOKEN_ERROR(60001,"token非法","");
 

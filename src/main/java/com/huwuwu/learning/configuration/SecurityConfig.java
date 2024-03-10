@@ -1,19 +1,24 @@
 package com.huwuwu.learning.configuration;
 
 import com.alibaba.fastjson.JSON;
+import com.huwuwu.learning.commons.eums.ErrorCode;
 import com.huwuwu.learning.commons.response.BaseResponse;
 import com.huwuwu.learning.commons.response.ResultUtils;
 import com.huwuwu.learning.commons.utils.WebUtils;
 import com.huwuwu.learning.filters.JwtAuthenticationTokenFilter;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -30,11 +35,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-/**
- * EnableGlobalMethodSecurity开启，可以使用权限注解，如：@PreAuthorize("hasAuthority('test')")
- */
+
 @Configuration
-@EnableGlobalMethodSecurity(prePostEnabled = true)
+@EnableWebSecurity //开启SpringSecurity的默认行为
+@Slf4j //日志
+//@EnableGlobalMethodSecurity(prePostEnabled = true)// 新版不推荐使用这个,这个的主要功能是开启方法上的鉴权，使用下面这个就可以
+@EnableMethodSecurity
 public class SecurityConfig{
 
     /**
@@ -58,7 +64,7 @@ public class SecurityConfig{
     @Resource
     private AccessDeniedHandler accessDeniedHandler;
 
-
+    // 这个主要是为了其他地方可以使用认证管理器
     @Bean
     public AuthenticationManager authenticationManagerBean(AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
@@ -92,9 +98,11 @@ public class SecurityConfig{
                 .authorizeRequests()
 
                 // 对于登录接口 允许匿名访问 未登录状态也可以访问
-                .antMatchers("/login/login").anonymous()
-                .antMatchers("/login/register").anonymous()
-                .antMatchers("/login/sendCode").anonymous()
+//                .antMatchers("/**").anonymous()
+//                .antMatchers("/huwuwu/admin/login").anonymous()
+                .antMatchers("/admin/login").anonymous()
+                .antMatchers("/admin/register").anonymous()
+                .antMatchers("/admin/sendCode").anonymous()
                 .antMatchers("/pay/notify").anonymous()
                 // 需要用户带有管理员权限
 //                .antMatchers("/find").hasRole("管理员")
@@ -127,10 +135,20 @@ public class SecurityConfig{
     public class AuthenticationEntryPointImpl implements AuthenticationEntryPoint {
         @Override
         public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
-            BaseResponse result = ResultUtils.error(HttpStatus.UNAUTHORIZED.value(), "", "认证失败");
-            String json = JSON.toJSONString(result);
-            //处理异常
-            WebUtils.renderString(response, json);
+            authException.printStackTrace();
+
+            BaseResponse result = null;
+            if(authException instanceof BadCredentialsException){
+                //用户名或密码错误
+                result = ResultUtils.error(ErrorCode.SEC_AUTHEN_USERNAME_PASSWORD_ERROR);
+            }else if(authException instanceof InsufficientAuthenticationException){
+                //认证请求未经授权
+                result = ResultUtils.error(ErrorCode.SEC_AUTHEN_NOAUTHOR_ERROR);
+            }else {
+                result = ResultUtils.error(ErrorCode.SEC_AUTHEN_ERROR);
+            }
+            //响应给前端
+            WebUtils.renderString(response, JSON.toJSONString(result));
 
         }
     }

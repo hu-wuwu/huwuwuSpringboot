@@ -1,11 +1,15 @@
 server:
   port: 18081
+  servlet:
+    context-path: /huwuwu
 spring:
+  main:
+    allow-circular-references: true #自动中断循环。
   datasource:
     druid:
-      url: jdbc:mysql://127.0.0.1:3306/huwuwu?useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+      url: jdbc:mysql://127.0.0.1:3306/huwuwumysql?useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
       username: root
-      password: 123456
+      password: 1234561
       driver-class-name: com.mysql.cj.jdbc.Driver
 
   redis:
@@ -67,3 +71,11 @@ mybatis-plus:
         cache-enabled: false
         # 这个配置会将执行的sql打印出来，在开发或测试的时候可以用
         log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+
+
+# jasypt加密秘钥，需要从配置文件中删除，改为在项目启动命令上配置环境参数
+jasypt:
+  encryptor:
+    algorithm: PBEWithMD5AndDES #默认指定加密算法
+    password: salt # 指定密钥：-Djasypt.encryptor.password=salt
