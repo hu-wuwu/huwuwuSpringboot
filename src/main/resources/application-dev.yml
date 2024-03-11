@@ -32,6 +32,13 @@ spring:
         # #连接池最大阻塞等待时间（使用负值表示没有限制）
         max-wait: 10000
 
+  rabbitmq:
+    virtual-host: /test
+    host: 172.0.0.1
+    port: 5672
+    username: guest
+    password: guest
+
 mybatis-plus:
   # 指定Mapper XML文件的位置，使用classpath通配符指定路径。
   mapper-locations: classpath*:mapper/*.xml

@@ -13,7 +13,14 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <spring-boot.version>2.6.13</spring-boot.version>
     </properties>
+
     <dependencies>
+
+        <!--rabbitmq-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-amqp</artifactId>
+        </dependency>
 
         <!--对配置文件的一些重要明文加密-->
         <!-- JDK9+用3.x版本，JDK8用2.x版本 -->
