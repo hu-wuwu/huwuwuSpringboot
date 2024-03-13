@@ -86,3 +86,9 @@ jasypt:
   encryptor:
     algorithm: PBEWithMD5AndDES #默认指定加密算法
     password: salt # 指定密钥：-Djasypt.encryptor.password=salt
+
+minio:
+  endpoint: http://127.0.0.1:9000
+  accessKey: minioadmin
+  secretKey: minioadmin
+  bucketName: test

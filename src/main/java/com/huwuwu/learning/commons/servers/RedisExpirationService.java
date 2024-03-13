@@ -3,16 +3,17 @@ package com.huwuwu.learning.commons.servers;
 import com.huwuwu.learning.commons.utils.RedisUtil;
 import com.huwuwu.learning.commons.utils.SignUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
 import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @Service
 public class RedisExpirationService {
 
-    @Resource
+    @Autowired
     private RedisUtil redisUtil;
 
     public void processingExpiredKey(String expiredKey) {

@@ -24,9 +24,6 @@ public class AdminController {
     @Autowired
     private LoginService loginService;
 
-    @Resource
-    private BCryptPasswordEncoder bCryptPasswordEncoder;
-
     /**
      * 登录接口
      * @param adminVO

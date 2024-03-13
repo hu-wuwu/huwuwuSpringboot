@@ -29,7 +29,7 @@ public class LoginServiceImpl implements LoginService {
 
     @Autowired
     private AuthenticationManager authenticationManager;
-    @Resource
+    @Autowired
     private RedisUtil redisUtil;
 
     @Override

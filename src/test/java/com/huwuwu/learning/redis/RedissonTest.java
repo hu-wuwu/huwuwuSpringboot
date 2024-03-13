@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
  
@@ -21,10 +22,10 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 @SpringBootTest(classes = LearningApplication.class)
 public class RedissonTest {
  
-    @Resource
+    @Autowired
     private RedissonClient redissonClient;
  
-    @Resource
+    @Autowired
     private ThreadPoolTaskExecutor executor;
  
     // redisson分布式锁的key

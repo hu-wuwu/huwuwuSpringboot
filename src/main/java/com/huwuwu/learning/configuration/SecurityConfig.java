@@ -61,7 +61,7 @@ public class SecurityConfig{
     @Autowired
     private AuthenticationEntryPoint authenticationEntryPoint;
 
-    @Resource
+    @Autowired
     private AccessDeniedHandler accessDeniedHandler;
 
     // 这个主要是为了其他地方可以使用认证管理器

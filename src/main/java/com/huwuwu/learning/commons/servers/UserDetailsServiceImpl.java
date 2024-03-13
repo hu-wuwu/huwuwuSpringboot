@@ -7,6 +7,7 @@ import com.huwuwu.learning.model.po.AdminPO;
 import com.huwuwu.learning.model.vo.LoginUser;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -22,7 +23,7 @@ import java.util.Objects;
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
 
-    @Resource
+    @Autowired
     private AdminDAO adminDAO;
 
     /**
