@@ -38,6 +38,26 @@ spring:
     port: 5672
     username: guest
     password: guest
+    # 设置MQ的连接超时时间
+    connection-timeout: 1s
+    # confirm机制--》这个配置是保证提供者确保消息推送到交换机中，不管成不成功，都会回调。
+    publisher-confirm-type: correlated
+    # return机制--》保证交换机能把消息推送到队列中
+    publisher-returns: true
+    # ack机制--》这个配置是保证消费者会消费消息，手动确认
+    listener:
+      simple:
+        #ACK处理方式
+        acknowledge-mode: manual
+    # 做可靠性，当然是设置为返回到客户端(true是返回客户端，false是自动删除)
+    template:
+      mandatory: true
+      #不过SpringAMQP提供的重试机制是阻塞式的重试，也就是说多次重试等待的过程中，当前线程是被阻塞的。对于业务性能有要求，建议禁用重试机制
+      retry:
+        enabled: true # 开启超时重试机制
+        initial-interval: 1000ms # 失败后的初始等待时间
+        multiplier: 1 # 失败后下次的等待时长倍数，下次等待时长 = initial-interval * multiplier
+        max-attempts: 2 # 最大重试次数
 
 mybatis-plus:
   # 指定Mapper XML文件的位置，使用classpath通配符指定路径。
@@ -87,6 +107,7 @@ jasypt:
     algorithm: PBEWithMD5AndDES #默认指定加密算法
     password: salt # 指定密钥：-Djasypt.encryptor.password=salt
 
+#对象存储
 minio:
   endpoint: http://127.0.0.1:9000
   accessKey: minioadmin
