@@ -16,6 +16,16 @@
 
     <dependencies>
 
+        <!--Elasticsearch -->
+        <!--老版（spring-boot-starter-data-elasticsearch）客户端操作方式性能不足-->
+        <!--elasticsearch-rest-high-level-client 不支持8.x，并且官方弃用-->
+        <!--es 8.x后推荐使用 Elasticsearch Java API 客户端-->
+        <dependency>
+            <groupId>co.elastic.clients</groupId>
+            <artifactId>elasticsearch-java</artifactId>
+            <version>8.2.2</version>
+        </dependency>
+
         <!--对象存储服务OSS-->
         <dependency>
             <groupId>io.minio</groupId>
