@@ -3,13 +3,13 @@ package com.huwuwu.learning.web;
 
 import com.huwuwu.learning.commons.response.BaseResponse;
 import com.huwuwu.learning.commons.response.ResultUtils;
-import com.huwuwu.learning.configuration.rabbitmq.DelayedRabbitConfig;
-import com.huwuwu.learning.configuration.rabbitmq.DirectRabbitConfig;
+import com.huwuwu.learning.configuration.rabbitmq.DelayedConfig;
+import com.huwuwu.learning.configuration.rabbitmq.DirectConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -27,10 +27,11 @@ public class RabbitMQController {
     @Autowired
     private RabbitTemplate rabbitTemplate;
 
-    @GetMapping("/sendMsg/{message}")
-    public BaseResponse sendMsg(@PathVariable String message) {
-        log.info("当前时间：{}，发送一条消息给两个TTL队列：{}", new Date(), message);
-        rabbitTemplate.convertAndSend(DirectRabbitConfig.DIRECT_EXCHANGE, DirectRabbitConfig.DIRECT_ROUTING_KEY, message, msg -> {
+    @PostMapping("/sendDirectMsg")
+    public BaseResponse sendDirectMsg(@RequestBody Map<String,String> map) {
+        String message = map.get("message");
+        log.info("当前时间：{}，发送一条消息给DIRECT队列：{}", new Date(), message);
+        rabbitTemplate.convertAndSend(DirectConfig.DIRECT_EXCHANGE, DirectConfig.DIRECT_ROUTING_KEY, message, msg -> {
             Map<String, Object> headers = msg.getMessageProperties().getHeaders();
             headers.put("format", "pdf");
             headers.put("type", "report");
@@ -39,30 +40,34 @@ public class RabbitMQController {
         return ResultUtils.success("发送消息给队列");
     }
 
-    @GetMapping("/sendExpirationMsg/{message}/{ttlTime}")
-    public void sendMsg(@PathVariable String message, @PathVariable String ttlTime) {
-        log.info("当前时间：{}，发送一条时长{}毫秒的TTL消息给normal03队列：{}", new Date(), ttlTime, message);
-        rabbitTemplate.convertAndSend("normal_exchange", "normal03", message, msg -> {
+    @PostMapping("/sendExpirationMsg")
+    public BaseResponse sendExpirationMsg(@RequestBody Map<String,String> map) {
+        String message = map.get("message");
+        String ttlTime = map.get("ttlTime");
+        log.info("当前时间：{}，发送一条时长{}毫秒的TTL消息给DIRECT队列：{}", new Date(), ttlTime, message);
+        rabbitTemplate.convertAndSend(DirectConfig.DIRECT_EXCHANGE_B, DirectConfig.DIRECT_ROUTING_KEY_B, message, msg -> {
             //发送消息的时候延迟时长
             msg.getMessageProperties().setExpiration(ttlTime);
             return msg;
         });
+        return ResultUtils.success("设置过期消息");
     }
 
     /**
      * 给延迟队列发送消息
      *
-     * @param message
-     * @param delayTime
      */
-    @GetMapping("/sendDelayMsg/{message}/{delayTime}")
-    public void sendMsg(@PathVariable String message, @PathVariable Integer delayTime) {
+    @PostMapping("/sendDelayMsg")
+    public BaseResponse sendDelayMsg(@RequestBody Map<String,String> map) {
+        String message = map.get("message");
+        String delayTime = map.get("delayTime");
         log.info("当前时间：{}，发送一条时长{}毫秒的消息给延迟队列：{}", new Date(), delayTime, message);
-        rabbitTemplate.convertAndSend(DelayedRabbitConfig.DELAY_EXCHANGE, DelayedRabbitConfig.DELAY_ROUTING_KEY, message, msg -> {
+        rabbitTemplate.convertAndSend(DelayedConfig.DELAY_EXCHANGE, DelayedConfig.DELAY_ROUTING_KEY, message, msg -> {
             //发送消息的时候延迟时长
-            msg.getMessageProperties().setDelay(delayTime);
+            msg.getMessageProperties().setDelay(Integer.valueOf(delayTime));
             return msg;
         });
+        return ResultUtils.success("设置延迟消息");
     }
 
 

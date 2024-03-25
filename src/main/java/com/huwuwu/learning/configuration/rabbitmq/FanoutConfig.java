@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class FanoutRabbitConfig {
+public class FanoutConfig {
 
     public static final String FANOUT_QUEUE_NAME = "htFanoutQueue";
     public static final String FANOUT_EXCHANGE_NAME = "htFanoutExchange";
@@ -22,7 +22,7 @@ public class FanoutRabbitConfig {
     @Bean
     public Queue fanoutQueue() {
         //durable:true mq服务器重启后仍然存在 false重启后队列自动删除
-        return new Queue(FANOUT_QUEUE_NAME, false);
+        return new Queue(FANOUT_QUEUE_NAME, true);
     }
 
     /**

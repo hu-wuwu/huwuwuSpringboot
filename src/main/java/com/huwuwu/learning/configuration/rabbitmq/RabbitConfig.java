@@ -40,10 +40,10 @@ public class RabbitConfig {
                 // 如果配置了发送回调ReturnCallback，插件延迟队列则会回调该方法，
                 // 因为发送方确实没有投递到队列上，只是在交换器上暂存，等过期时间到了 才会发往队列。
                 // 并非是BUG，而是有原因的，建议利用if 去拦截这个异常，判断延迟队列交换机名称，然后break;
-//                if (exchange.equals("你声明的延迟队列的交换机")) {
-//                    return;
-//                }
-                log.info("ReturnsCallback 消息：{},回应码：{},回应信息：{},交换机：{},路由键：{}"
+                if (returnedMessage.getExchange().equals(DelayedConfig.DELAY_EXCHANGE)) {
+                    return;
+                }
+                    log.info("ReturnsCallback 消息：{},回应码：{},回应信息：{},交换机：{},路由键：{}"
                         , returnedMessage.getMessage(), returnedMessage.getReplyCode()
                         , returnedMessage.getReplyText(), returnedMessage.getExchange()
                         , returnedMessage.getRoutingKey());

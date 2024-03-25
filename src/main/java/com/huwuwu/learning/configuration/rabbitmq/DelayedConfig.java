@@ -14,7 +14,7 @@ import java.util.Map;
  * 定义延迟交换机
  */
 @Configuration
-public class DelayedRabbitConfig {
+public class DelayedConfig {
     //队列
     public static final String DELAY_QUEUE = "delayedqueue";
     //交换机

@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class TopicRabbitConfig {
+public class TopicConfig {
 
     static final String TOPIC_QUEUE_NAME="htTopicQueue";
     static final String TOPIC_QUEUE1_NAME="htTopicQueue1";
@@ -33,7 +33,7 @@ public class TopicRabbitConfig {
     @Bean
     public Queue topicQueue(){
         //durable:true mq服务器重启后让然存在 false重启后队列自动删除
-        return new Queue(TOPIC_QUEUE_NAME,false);
+        return new Queue(TOPIC_QUEUE_NAME,true);
     }
     @Bean
     Binding bindingTopic(){

@@ -1,33 +1,37 @@
 package com.huwuwu.learning.configuration.rabbitmq;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.amqp.core.Binding;
-import org.springframework.amqp.core.BindingBuilder;
-import org.springframework.amqp.core.DirectExchange;
-import org.springframework.amqp.core.Queue;
+import org.springframework.amqp.core.*;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import java.util.Map;
 
 /**
  * @author GXM
  * @version 1.0.0
  * @Description 创建direct类型的交换机
- * @createTime 2023年01月03日
+ * @createTime B0B3年01月03日
  */
 @Slf4j
 @Configuration
-public class DirectRabbitConfig {
+public class DirectConfig {
 
 
-    public static final String DIRECT_QUEUE = "TestDirectQueue";
-    public static final String DIRECT_EXCHANGE = "TestDirectExchange";
-    public static final String DIRECT_ROUTING_KEY = "TestDirectRouting";
+    public static final String DIRECT_QUEUE = "DirectQueue";
+    public static final String DIRECT_EXCHANGE = "DirectExchange";
+    public static final String DIRECT_ROUTING_KEY = "DirectRouting";
 
+
+    public static final String DIRECT_QUEUE_B = "DirectQueueB";
+    public static final String DIRECT_EXCHANGE_B = "DirectExchangeB";
+    public static final String DIRECT_ROUTING_KEY_B = "DirectRoutingB";
     /**
      * 创建一个名为TestDirectQueue的队列
      *
      * @return
      */
+
     @Bean
     public Queue directQueue() {
         // durable:是否持久化,默认是false,持久化队列：会被存储在磁盘上，当消息代理重启时仍然存在，暂存队列：当前连接有效
@@ -36,6 +40,7 @@ public class DirectRabbitConfig {
         // arguments：队列携带的参数，比如设置队列的死信队列，消息的过期时间等等。
         return new Queue(DIRECT_QUEUE, true);
     }
+
 
     /**
      * 创建一个名为TestDirectExchange的Direct类型的交换机
@@ -60,5 +65,29 @@ public class DirectRabbitConfig {
         //bind队列to交换机中with路由key（routing key）
         return BindingBuilder.bind(directQueue()).to(directExchange()).with(DIRECT_ROUTING_KEY);
     }
+
+    @Bean
+    public Queue directQueueB() {
+        //这里声明当前队列绑定的死信交换机
+        Map<String, Object> args = DeadLetterConfig.deadQueueArgs();
+        return new Queue(DIRECT_QUEUE_B, true, false, false, args);
+    }
+
+    @Bean
+    public DirectExchange directExchangeB() {
+        return new DirectExchange(DIRECT_EXCHANGE_B, true, false);
+    }
+
+    /**
+     * 绑定交换机和队列
+     *
+     * @return
+     */
+    @Bean
+    public Binding bindingDirectB() {
+        return BindingBuilder.bind(directQueueB()).to(directExchangeB()).with(DIRECT_ROUTING_KEY_B);
+    }
+
+
 }
 

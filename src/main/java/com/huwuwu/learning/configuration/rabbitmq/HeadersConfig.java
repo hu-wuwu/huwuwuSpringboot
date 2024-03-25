@@ -11,9 +11,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Configuration
-public class HeadersRabbitConfig {
+public class HeadersConfig {
 
     static final String HEADERS_QUEUE_NAME="htHeadersQueue";
+
     public static final String HEADERS_EXCHANGE_NAME="htHeadersExchange";
 
     //发送消息是只需要创建exchange即可
@@ -28,7 +29,7 @@ public class HeadersRabbitConfig {
     }
 
     @Bean
-    Binding bindingDirect(){
+    Binding bindingHeaders(){
         Map<String, Object> arguments = new HashMap<>();
         arguments.put("format",  "pdf");
         arguments.put("type",  "report");
@@ -37,7 +38,7 @@ public class HeadersRabbitConfig {
     }
 
     @Bean
-    Binding bindingAllDirect(){
+    Binding bindingAllHeaders(){
         Map<String, Object> arguments = new HashMap<>();
         arguments.put("format",  "pdf");
         arguments.put("type",  "report");

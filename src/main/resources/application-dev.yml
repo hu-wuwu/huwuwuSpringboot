@@ -34,12 +34,11 @@ spring:
 
   rabbitmq:
     virtual-host: /test
-    host: 172.0.0.1
+    host: 127.0.0.1
     port: 5672
     username: guest
     password: guest
-    # 设置MQ的连接超时时间
-    connection-timeout: 1s
+    connection-timeout: 10000  # 设置连接超时时间为10秒（毫秒）
     # confirm机制--》这个配置是保证提供者确保消息推送到交换机中，不管成不成功，都会回调。
     publisher-confirm-type: correlated
     # return机制--》保证交换机能把消息推送到队列中
